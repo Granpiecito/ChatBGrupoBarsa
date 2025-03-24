@@ -1,18 +1,19 @@
-CREATE DATABASE IF NOT EXISTS CBGRUPOBS;
+CREATE DATABASE IF NOT EXISTS CBGRUPOBS
+    DEFAULT CHARACTER SET = 'utf8mb4';
 USE CBGRUPOBS;
 
 CREATE TABLE USER ( /*Tabla para almacenar la informacion basica del usuario*/
     ID INT PRIMARY KEY AUTO_INCREMENT,
-    NUMBER_PHONE VARCHAR(12) NOT NULL ,
+    NUMBER_PHONE INT(12) NOT NULL ,
     NAME VARCHAR(150) NOT NULL,
-    CID_RUC VARCHAR(100) NOT NULL,
+    CID_RUC VARCHAR(16) NOT NULL
 );
 
 CREATE TABLE SERVICE (  /*Tabla para alamcenar los servicios ofrecidos por GrupoBarsa*/
     ID INT PRIMARY KEY AUTO_INCREMENT,
     NAME VARCHAR(150) NOT NULL,
     DESCRIPTION VARCHAR(150) NOT NULL,
-    IMAGE VARCHAR(150) NOT NULL,
+    IMAGE VARCHAR(150) NOT NULL
 );
 
 CREATE TABLE USER_SERVICE ( /*Tabla para registrar si el usuario se interesa por alguno de los servicios ofertados*/
@@ -20,7 +21,7 @@ CREATE TABLE USER_SERVICE ( /*Tabla para registrar si el usuario se interesa por
     USER_ID INT NOT NULL,
     SERVICE_ID INT NOT NULL,
     FOREIGN KEY (USER_ID) REFERENCES USER(ID),
-    FOREIGN KEY (SERVICE_ID) REFERENCES SERVICE(ID),
+    FOREIGN KEY (SERVICE_ID) REFERENCES SERVICE(ID)
 );
 
 CREATE TABLE RESERVATION ( /*Tabla que almacena el registro de reservacion del servicio*/
@@ -29,5 +30,5 @@ CREATE TABLE RESERVATION ( /*Tabla que almacena el registro de reservacion del s
     DATE DATE NOT NULL,
     TIME TIME NOT NULL,
     RESERVATION_STATUS INT(1) NOT NULL, /* 0: Cancelado, 1: Pendiente, 2: Confirmado */
-    FOREIGN KEY (USER_SERVICE_ID) REFERENCES USER_SERVICE(ID),
+    FOREIGN KEY (USER_SERVICE_ID) REFERENCES USER_SERVICE(ID)
 )

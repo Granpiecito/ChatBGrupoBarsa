@@ -1,4 +1,5 @@
 import { join } from 'path'
+import { createDatabaseAdapter } from './services/Database/db';
 import { createBot, createProvider, createFlow, addKeyword, utils } from '@builderbot/bot'
 import { MysqlAdapter as Database } from '@builderbot/database-mysql'
 import { MetaProvider as Provider } from '@builderbot/provider-meta'
@@ -45,24 +46,20 @@ const fullSamplesFlow = addKeyword<Provider, Database>(['samples', utils.setEven
     })
 
 const main = async () => {
-    const adapterFlow = createFlow([welcomeFlow])
+    const adapterFlow = createFlow([welcomeFlow, fullSamplesFlow])
     const adapterProvider = createProvider(Provider, {
-        jwtToken: process.env.Whatsapp_Token ,
-        numberId: process.env.Number_Id,
+        jwtToken: 'Jwt-Token', ,
+        numberId: 'Number-ID',
         verifyToken: 'Verify-Token',
         version: 'v22.0'
     })
-    const adapterDB = new Database({
-        host: process.env.MYSQL_DB_HOST,
-        user: process.env.MYSQL_DB_USER,
-        database: process.env.MYSQL_DB_NAME,
-        password: process.env.MYSQL_DB_PASSWORD,
-    }) 
+
+    const adapterDB = createDatabaseAdapter();
 
     const { handleCtx, httpServer } = await createBot({
         flow: adapterFlow,
         provider: adapterProvider,
-        database: adapaterDB,
+        database: adapterDB,
     })
 
     adapterProvider.server.post(
