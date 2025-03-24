@@ -5,19 +5,6 @@ import { MetaProvider as Provider } from '@builderbot/provider-meta'
 
 const PORT = process.env.PORT ?? 3008
 
-const discordFlow = addKeyword<Provider, Database>('doc').addAnswer(
-    ['You can see the documentation here', '📄 https://builderbot.app/docs \n', 'Do you want to continue? *yes*'].join(
-        '\n'
-    ),
-    { capture: true },
-    async (ctx, { gotoFlow, flowDynamic }) => {
-        if (ctx.body.toLocaleLowerCase().includes('yes')) {
-            return gotoFlow(registerFlow)
-        }
-        await flowDynamic('Thanks!')
-        return
-    }
-)
 
 const welcomeFlow = addKeyword<Provider, Database>(['hi', 'hello', 'hola'])
     .addAnswer(`🙌 Hello welcome to this *Chatbot*`)
@@ -33,10 +20,9 @@ const welcomeFlow = addKeyword<Provider, Database>(['hi', 'hello', 'hola'])
             }
             return
         },
-        [discordFlow]
     )
 
-const registerFlow = addKeyword<Provider, Database>(utils.setEvent('REGISTER_FLOW'))
+
     .addAnswer(`What is your name?`, { capture: true }, async (ctx, { state }) => {
         await state.update({ name: ctx.body })
     })
@@ -59,24 +45,24 @@ const fullSamplesFlow = addKeyword<Provider, Database>(['samples', utils.setEven
     })
 
 const main = async () => {
-    const adapterFlow = createFlow([welcomeFlow, registerFlow, fullSamplesFlow])
+    const adapterFlow = createFlow([welcomeFlow])
     const adapterProvider = createProvider(Provider, {
-        jwtToken: 'JWT-Token',
-        numberId: 'Number-ID',
+        jwtToken: process.env.Whatsapp_Token ,
+        numberId: process.env.Number_Id,
         verifyToken: 'Verify-Token',
         version: 'v22.0'
     })
-    /*const adapterDB = new Database({
+    const adapterDB = new Database({
         host: process.env.MYSQL_DB_HOST,
         user: process.env.MYSQL_DB_USER,
         database: process.env.MYSQL_DB_NAME,
         password: process.env.MYSQL_DB_PASSWORD,
-    }) */
+    }) 
 
     const { handleCtx, httpServer } = await createBot({
         flow: adapterFlow,
         provider: adapterProvider,
-        database: null,
+        database: adapaterDB,
     })
 
     adapterProvider.server.post(
