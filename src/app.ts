@@ -1,38 +1,21 @@
 import { join } from 'path'
+import * as dotenv from 'dotenv'
 import { createDatabaseAdapter } from './services/Database/db';
+import {welcomeFlow} from './services/Flows/WelcomeFlow'
 import { createBot, createProvider, createFlow, addKeyword, utils } from '@builderbot/bot'
 import { MysqlAdapter as Database } from '@builderbot/database-mysql'
 import { MetaProvider as Provider } from '@builderbot/provider-meta'
 
 const PORT = process.env.PORT ?? 3008
 
+dotenv.config()
 
-const welcomeFlow = addKeyword<Provider, Database>(['hi', 'hello', 'hola'])
-    .addAnswer(`🙌 Hello welcome to this *Chatbot*`)
-    .addAnswer(
-        [
-            'I share with you the following links of interest about the project',
-            '👉 *doc* to view the documentation',
-        ].join('\n'),
-        { delay: 800, capture: true },
-        async (ctx, { fallBack }) => {
-            if (!ctx.body.toLocaleLowerCase().includes('doc')) {
-                return fallBack('You should type *doc*')
-            }
-            return
-        },
-    )
+const servicesFlow = addKeyword<Provider, Database>(['servicios', 'eventos', 'información'])
+    .addAnswer('Claro con gusto te brindare información acerca de nuestros servicios',{ delay: 950 })
+    .addAnswer('Solo permitenos un momento para brindarte la información necesaria', { delay: 900 })
+    .addAnswer('🔹 *Servicios*:\n\n🔹 *Eventos*:\n\n🔹 *Información*:', { delay: 900 })
 
 
-    .addAnswer(`What is your name?`, { capture: true }, async (ctx, { state }) => {
-        await state.update({ name: ctx.body })
-    })
-    .addAnswer('What is your age?', { capture: true }, async (ctx, { state }) => {
-        await state.update({ age: ctx.body })
-    })
-    .addAction(async (_, { flowDynamic, state }) => {
-        await flowDynamic(`${state.get('name')}, thanks for your information!: Your age: ${state.get('age')}`)
-    })
 
 const fullSamplesFlow = addKeyword<Provider, Database>(['samples', utils.setEvent('SAMPLES')])
     .addAnswer(`💪 I'll send you a lot files...`)
@@ -46,11 +29,11 @@ const fullSamplesFlow = addKeyword<Provider, Database>(['samples', utils.setEven
     })
 
 const main = async () => {
-    const adapterFlow = createFlow([welcomeFlow, fullSamplesFlow])
+    const adapterFlow = createFlow([welcomeFlow, fullSamplesFlow, servicesFlow])
     const adapterProvider = createProvider(Provider, {
-        jwtToken: 'Jwt-Token', ,
-        numberId: 'Number-ID',
-        verifyToken: 'Verify-Token',
+        jwtToken: process.env.JWT_TOKEN, 
+        numberId: process.env.NUMBER_ID,
+        verifyToken: process.env.VERIFY_TOKEN,
         version: 'v22.0'
     })
 
