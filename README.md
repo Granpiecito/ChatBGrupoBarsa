@@ -16,12 +16,25 @@ Chatbot designed to assist with event registration and provide information about
 ```
 └── 📁ChatBGrupoBarsa
     └── 📁assets
-        └── sample.png
+    |    └── sample.png
     └── 📁src
-        └── app.ts
-    └── .dockerignore
-    └── .eslintrc.json
-    └── .gitignore
+    |   | └── app.ts  # Principal Bot code
+    |   └──📁Database
+    |   |   └──db.ts
+    |   └──📁scripts
+    |   |    └──📁bd
+    |   |         └──bd.sql
+    |   └──📁Flows
+    |   |   └──📁Services-List
+    |   |   └──AboutFlow.ts
+    |   |   └──EndFlow.ts
+    |   |   └──FlowLibrary.ts   # Collect all flows data
+    |   |   └──Reservations.ts
+    |   |   └──ServicesFlows.ts
+    |   |   └──WelcomeFlow.ts
+    |   |   └──ExmpleFlow.ts
+    |   └──📁Controller
+    |   └──📁Task
     └── Dockerfile
     └── nodemon.json
     └── package.json
@@ -44,3 +57,5 @@ Chatbot designed to assist with event registration and provide information about
   -Open a terminal and execute **pnpm install** to install all the dependencies.
 
 ## 👨‍💻Technologies used
+
+- Backend **Nest Js + TypeScript + WhatsApp Api V22.0**
